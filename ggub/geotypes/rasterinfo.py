@@ -192,7 +192,7 @@ def get_info(filename, full_report=True):  #,  argv=None):
             #           projection)
         gcps["projection"] = projection
 
-    return info
+    return str(info)
         # TODO
 
         # gcs = dataset.GetGCPs()
