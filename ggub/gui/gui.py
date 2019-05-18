@@ -35,3 +35,9 @@ def pretty_df(df):
     display(HTML(df.to_html()))
     return
 
+
+def interact_table(dataframe, showtoolbar=True, showstatusbar=True):
+    from ..pandastable import Table
+    pt = Table(root, dataframe=dataframe, showtoolbar=showtoolbar, showstatusbar=showstatusbar)
+    pt.show()
+    return
