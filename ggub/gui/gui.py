@@ -70,5 +70,6 @@ class InteractTable(Frame):
 
 def interact_table(dataframe, showtoolbar=True, showstatusbar=True):
     app = InteractTable(dataframe, showtoolbar, showstatusbar)
+    print("starting loop")
     app.mainloop()
     return

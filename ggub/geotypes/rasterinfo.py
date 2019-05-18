@@ -125,12 +125,6 @@ def get_info(filename, full_report=True):  #,  argv=None):
 
     file_list = dataset.GetFileList()
     info["Files"] = "none associated" if not file_list else file_list
-    #     print("Files: none associated")
-    # else:
-    #     print("Files: %s" % file_list[0])
-    # if bShowFileList:
-    #     for i in range(1, len(file_list)):
-    #         print("       %s" % file_list[i])
     info["Size X"] = dataset.RasterXSize
     info["Size Y"] = dataset.RasterYSize
 
