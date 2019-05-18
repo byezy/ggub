@@ -2,7 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 import tkinter
-from tkinter.filedialog  import askdirectory, askopenfilename, asksaveasfilename
+from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 from os import getcwd
 
 root = tkinter.Tk()
