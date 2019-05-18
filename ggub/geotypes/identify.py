@@ -10,12 +10,12 @@ def get_ext(fn):
     return ext.lower().strip('.') if format else None
 
 
-def is_raster(fn, test=False):
+def is_raster(fn, validate=False):
     supported_formats = ["tif"]
     return get_ext(fn) in supported_formats
 
 
-def is_vector(fn, test=False):
+def is_vector(fn, validate=False):
     supported_formats = ["shp"]
     return get_ext(fn) in supported_formats
 
