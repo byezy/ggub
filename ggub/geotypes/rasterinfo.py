@@ -141,12 +141,11 @@ def get_info(filename, full_report=True):  #,  argv=None):
         srs = osr.SpatialReference()
         if srs.ImportFromWkt(projection) == gdal.CE_None:
             projection = srs.ExportToPrettyWkt(False)
+        projection = projection.strip().strip("\n").strip("\t")
+    else:
+        projection = "Not defined"
 
-            info["SRS"] = projection
-        #     print("Coordinate System is:\n%s" % pretty_wkt)
-        # else:
-        #     print("Coordinate System is `%s'" % projection)
-
+    info["SRS"] = projection
     # geotransform
 
     geo_transform = dataset.GetGeoTransform(can_return_null=True)

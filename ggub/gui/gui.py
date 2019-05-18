@@ -1,9 +1,10 @@
 import matplotlib
 import tkinter
 from tkinter.filedialog import askdirectory, askopenfilename, askopenfilenames, asksaveasfilename
-from tkinter import colorchooser, Frame
+from tkinter import colorchooser, Frame, BOTH
 from os import getcwd
 from pandas import set_option
+from ..pandastable import Table, TableModel
 
 matplotlib.use('Agg')
 set_option('display.max_colwidth', -1)
@@ -44,16 +45,30 @@ def ask_colour(initialcolor=None):
     return rgb_color, web_color
 
 
-def pretty_df(df):
-    from IPython.display import HTML
-    display(HTML(df.to_html()))
-    return
+# def pretty_df(df):
+#     from IPython.display import HTML
+#     display(HTML(df.to_html()))
+#     return
+
+
+class InteractTable(Frame):
+    """Basic test frame for the table"""
+
+    def __init__(self, dataframe, showtoolbar, showstatusbar, parent=None):
+        self.parent = parent
+        Frame.__init__(self)
+        self.main = self.master
+        self.main.geometry('600x400+200+100')
+        self.main.title('Table View')
+        f = Frame(self.main)
+        f.pack(fill=BOTH, expand=1)
+        # df = TableModel.getSampleData()
+        self.table = pt = Table(f, dataframe=dataframe, showtoolbar=showtoolbar, showstatusbar=showstatusbar)
+        pt.show()
+        return
 
 
 def interact_table(dataframe, showtoolbar=True, showstatusbar=True):
-    from ..pandastable import Table
-    frame = Frame(root)
-    pt = Table(frame, dataframe=dataframe, showtoolbar=showtoolbar, showstatusbar=showstatusbar)
-    pt.show()
-    # root.mainloop()
+    app = InteractTable(dataframe, showtoolbar, showstatusbar)
+    app.mainloop()
     return
