@@ -1,6 +1,7 @@
 import matplotlib
 import tkinter
-from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
+from tkinter.filedialog import askdirectory, askopenfilename, askopenfilenames, asksaveasfilename
+from tkinter import colorchooser, Frame
 from os import getcwd
 from pandas import set_option
 
@@ -10,24 +11,37 @@ root = tkinter.Tk()
 root.withdraw()
 
 
-def ask_open_directory(initialdir=None, title='Select a folder'):
+def ask_directory(initialdir=None, title='Select a folder'):
     return askdirectory(parent=root,
                         initialdir=(initialdir or getcwd()),
                         title=title)
 
 
-def ask_open_file (initialdir=None, title='Select a file', filetypes=None):
+def ask_open_file(initialdir=None, title='Select a file', filetypes=None):
     return askopenfilename(parent=root,
-                           initialdir=getcwd(),
+                           initialdir=(initialdir or getcwd()),
+                           title=title,
+                           filetypes=filetypes)
+
+
+def ask_open_files(initialdir=None, title='Select one or more files', filetypes=None):
+    return askopenfilename(parent=root,
+                           initialdir=(initialdir or getcwd()),
                            title=title,
                            filetypes=filetypes)
 
 
 def ask_save_file(initialdir=None, title='Save as', confirmoverwrite=True, defaultextension='.txt'):
-    return asksaveasfilename(initialdir=None,
+    return asksaveasfilename(parent=root,
+                             initialdir=(initialdir or getcwd()),
                              title=title,
                              confirmoverwrite=confirmoverwrite,
                              defaultextension=defaultextension)
+
+
+def ask_colour(initialcolor=None):
+    rgb_color, web_color = colorchooser.askcolor(parent=root, initialcolor=(initialcolor or (255, 0, 0)))
+    return rgb_color, web_color
 
 
 def pretty_df(df):
@@ -38,6 +52,8 @@ def pretty_df(df):
 
 def interact_table(dataframe, showtoolbar=True, showstatusbar=True):
     from ..pandastable import Table
-    pt = Table(root, dataframe=dataframe, showtoolbar=showtoolbar, showstatusbar=showstatusbar)
+    frame = Frame(root)
+    pt = Table(frame, dataframe=dataframe, showtoolbar=showtoolbar, showstatusbar=showstatusbar)
     pt.show()
+    # root.mainloop()
     return
