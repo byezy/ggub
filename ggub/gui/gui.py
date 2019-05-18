@@ -27,9 +27,10 @@ def ask_save_file(initialdir=None, title='Save as', confirmoverwrite=True, defau
                              title=title,
                              confirmoverwrite=confirmoverwrite,
                              defaultextension=defaultextension)
-#
-# def pretty_df(df):
-#     from IPython.display import HTML
-#     display(HTML(df.to_html()))
-#     return
+
+
+def pretty_df(df):
+    from IPython.display import HTML
+    display(HTML(df.to_html()))
+    return
 
