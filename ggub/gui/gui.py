@@ -1,9 +1,11 @@
 import matplotlib
-matplotlib.use('Agg')
 import tkinter
 from tkinter.filedialog import askdirectory, askopenfilename, asksaveasfilename
 from os import getcwd
+from pandas import set_option
 
+matplotlib.use('Agg')
+set_option('display.max_colwidth', -1)
 root = tkinter.Tk()
 root.withdraw()
 
