@@ -20,6 +20,11 @@ def is_vector(fn, validate=False):
     return get_ext(fn) in supported_formats
 
 
+def is_table(fn, validate=False):
+    supported_formats = ["csv"]
+    return get_ext(fn) in supported_formats
+
+
 def get_datatype(fn):
     x = is_raster(fn)
     if x:
@@ -62,11 +67,24 @@ def list_vectors(df):
     return dfv
 
 
-def list_geodata(path, rasters=False, vectors=False):
+def list_tables(df):
+    supported_formats = ["csv"]
+    dfv = df.copy()
+    dfv['table'] = dfv.filename.apply(lambda x: is_table(x))
+    dfv = dfv[dfv.table==True].reset_index(drop=True)
+    dfv.drop(columns=["table"], inplace=True)
+    dfv.index += 1
+    dfv.index.names = ["table"]
+    return dfv
+
+
+def list_geodata(path, rasters=False, vectors=False, tables=False):
     files_df = get_files_framed(path)
     d = {}
     if rasters:
         d['rasters'] = list_rasters(files_df)
-    if rasters:
+    if vectors:
         d['vectors'] = list_vectors(files_df)
+    if tables:
+        d['tables'] = list_tables(files_df)
     return d
