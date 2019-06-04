@@ -4,7 +4,7 @@ from tkinter.filedialog import askdirectory, askopenfilename, askopenfilenames, 
 from tkinter import colorchooser, Frame, BOTH
 from os import getcwd
 from pandas import set_option
-from ..pandastable import Table, TableModel
+from ggub.pandastable import Table, TableModel
 
 matplotlib.use('Agg')
 set_option('display.max_colwidth', -1)
