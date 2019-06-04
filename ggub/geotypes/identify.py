@@ -5,6 +5,11 @@ import pandas as pd
 # pd.set_option('display.max_colwidth', 200)
 
 
+class geodata:
+    def __init__():
+        self.rasters = self.vectors = self.tables = "Not Set"
+
+
 def get_ext(fn):
     ext = splitext(fn)[1]
     return ext.lower().strip('.') if format else None
@@ -80,11 +85,11 @@ def list_tables(df):
 
 def list_geodata(path, rasters=False, vectors=False, tables=False):
     files_df = get_files_framed(path)
-    d = {}
+    g = geodata()
     if rasters:
-        d['rasters'] = list_rasters(files_df)
+        setattr(g, "rasters", list_rasters(files_df))
     if vectors:
-        d['vectors'] = list_vectors(files_df)
+        setattr(g, "vectors", list_vectors(files_df))
     if tables:
-        d['tables'] = list_tables(files_df)
-    return d
+        setattr(g, "tables", list_tables(files_df))
+    return g
