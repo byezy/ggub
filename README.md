@@ -1,2 +1,2 @@
-# ggub
-Grid Garage Unbound Version
+# gg
+Grid Garage Jupyter Version
