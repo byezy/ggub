@@ -1,7 +1,16 @@
-export = ""
-description = "Filesystem Directory"
-abbreviation = "DIR"
+from driver import WorkspaceDriver
+from ...utils.filesystem import create_directory
 
 
-def list_geodata(workspace, **kwargs):
-    pass
+class DirectoryDriver(WorkspaceDriver):
+
+    def create(self, **kwargs):
+        d = create_directory(kwargs['parent'], kwargs['name'])
+        return d
+
+    def list_data(self, **kwargs):
+        pass
+
+
+driver = DirectoryDriver("Filesystem Directory", "DIR")
+
