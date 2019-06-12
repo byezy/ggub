@@ -13,4 +13,3 @@ def morph_filename(filename, out_path="", prefix="", suffix="", replacements=[("
 # v.rename(columns={'fullpath': 'in_vector'}, inplace=True)
 # v['out_raster'] = v['filename'].apply(lambda x: join(out_folder, f'{x}.tif'))
 # gui.pretty_df(v)
-

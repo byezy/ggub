@@ -1,7 +1,8 @@
-from os import walk
+from os import walk, getcwd
 from os.path import join, abspath, isdir
 import pandas as pd
-from ggj.geotypes.workspaces import ws_directory
+from ggj.geotypes.workspaces.driver import get_workspace_driver
+from ..utils.filesystem import list_files
 
 pd.set_option('display.width', 200)
 pd.set_option('display.max_colwidth', 200)
@@ -9,48 +10,27 @@ pd.set_option('display.max_colwidth', 200)
 from osgeo import gdal
 
 
-class SupportedTypes:
-    def __init__(self):
-        self.workspaces = self.rasters = self.vectors = self.tables = []
+# class SupportedTypes:
+#     def __init__(self):
+#         self.workspaces = self.rasters = self.vectors = self.tables = []
 
-    def supported():
-        gdal_supported = sorted([gdal.GetDriver(i).GetDescription() for i in range(gdal.GetDriverCount())])
-        self.workspaces = {'GPKG': 'Geopackage', 'DIR': 'File Directory'}  # , 'GDB': 'File Geodatabase'}
-        self.tables = {
-            'CSV': 'Comma Separated Values'}  # , 'TXT': 'Delimited Text', 'DBF': 'dBase Table', 'FGT': 'File Geodatabase Table'}
-        self.vectors = {'SHP': 'ESRI Shapefile'}
+#     def supported():
+#         gdal_supported = sorted([gdal.GetDriver(i).GetDescription() for i in range(gdal.GetDriverCount())])
+#         self.workspaces = {'GPKG': 'Geopackage', 'DIR': 'File Directory'}  # , 'GDB': 'File Geodatabase'}
+#         self.tables = {
+#             'CSV': 'Comma Separated Values'}  # , 'TXT': 'Delimited Text', 'DBF': 'dBase Table', 'FGT': 'File Geodatabase Table'}
+#         self.vectors = {'SHP': 'ESRI Shapefile'}
 
 
 class Geodata:
-    def __init__(self):
-        self.other = self.rasters = self.vectors = self.tables = None
-        self.supported_types = SupportedTypes()
+    def __init__(self, workspace, kwargs):
+        self.kwargs = kwargs
+        self.workspace = workspace
+        self.workspace_driver = get_workspace_driver(workspace)
+        self.other = self.rasters = self.vectors = self.tables = self.workspaces = None
 
-    def list_geodata(workspace, **kwargs):
-
-        if isdir(workspace):
-            g = ws_directory.list_geodata(workspace, **kwargs)
-            # self.
-        else:
-            raise ValueError("Identifying within this workspace type has not been implemented")
-
-    def list_in_directory(directory):
-        files = get_files(path)
-
-    def list_tables():
-        pass
-
-    def list_rasters():
-        pass
-
-    def list_vectors():
-        pass
-
-    def get_files(path):
-        data = [join(abspath(root), filename) for root, dirs, files in walk(path) for filename in files]
-        df = pd.DataFrame(data, columns=['filename'])
-        df.index.names = ["file"]
-        return df
+    def list_data(self):
+        data = self.workspace_driver.list_data(self.workspace, self.kwargs)
 
 
 # import rasterio
@@ -88,9 +68,9 @@ warnings.filterwarnings("error")
 #         return False
 
 
-def is_table(fn, validate=False):
-    supported_formats = ["csv"]
-    return get_ext(fn) in supported_formats
+# def is_table(fn, validate=False):
+#     supported_formats = ["csv"]
+#     return get_ext(fn) in supported_formats
 
 
 # def get_datatype(fn):
@@ -112,19 +92,19 @@ def is_table(fn, validate=False):
 #     return df
 
 
-def get_tables(df_gdal):
-    i = df_gdal["filetype"].isin(["CSV"])
-    df_tables = df_gdal[i]
-    df_tables.index.names = ["table"]
-    df_tables.reset_index(inplace=True)
-    return df_tables
+# def get_tables(df_gdal):
+#     i = df_gdal["filetype"].isin(["CSV"])
+#     df_tables = df_gdal[i]
+#     df_tables.index.names = ["table"]
+#     df_tables.reset_index(inplace=True)
+#     return df_tables
 
 
-def get_other_framed(df_files, df_gdal):
-    i = df_files["filename"].isin([df_gdal["filename"]])
-    df_other = df_files[~i]
-    df_other.index.names = ["other"]
-    return df_other
+# def get_other_framed(df_files, df_gdal):
+#     i = df_files["filename"].isin([df_gdal["filename"]])
+#     df_other = df_files[~i]
+#     df_other.index.names = ["other"]
+#     return df_other
 
 
 # def list_rasters(df):
@@ -158,16 +138,19 @@ def get_other_framed(df_files, df_gdal):
 #     dfv.index.names = ["table"]
 #     return dfv
 
+def check_dict_default(dict, key, default):
+    if key not in dict:
+        dict[key] = default
 
-def list_geodata(workspace, **kwargs):
-    g = Geodata()
-    g.identify_in_path(path)
-    g.files = get_files(path)
-    #     g.gdal = get_gdal_framed(path)
-    g.tables = get_tables(g.gdal)
-    g.other = get_other_framed(g.files, g.gdal)
-    print(g.files)
-    print(g.gdal)
-    print(g.other)
-    print(g.tables)
+    return None
+
+
+def list_geodata(workspace=getcwd(), **kwargs):
+    check_dict_default(kwargs, 'recurse', True)
+    check_dict_default(kwargs, 'tables', True)
+    check_dict_default(kwargs, 'vectors', True)
+    check_dict_default(kwargs, 'rasters', True)
+
+    g = Geodata(workspace, kwargs)
+
     return g
