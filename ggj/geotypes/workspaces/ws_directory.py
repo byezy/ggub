@@ -1,9 +1,52 @@
-from .driver import WorkspaceDriver, Searchable
+from .driver import WorkspaceDriver, SupportedObject, SupportedFormat
 from ...utils.filesystem import is_directory, create_directory
 
 
-class TableSearchable(Searchable):
-    def search(workspace):
+class WorkspaceObject:
+    pass
+
+
+class TableObject(SupportedObject):
+    def __init__(self, *args, **kwargs):
+        super(SupportedObject, self).__init__(*args, **kwargs)
+        self.formats = [SupportedFormat("Comma Separated Values", "CSV", ".csv"),
+                        SupportedFormat("dBase", "dBase", ".dbf")]
+
+    def search(self, workspace):
+        for format in self.formats:
+            print(format.extension)
+        return []
+
+
+class VectorObject(SupportedObject):
+    def __init__(self, *args, **kwargs):
+        super(SupportedObject, self).__init__(*args, **kwargs)
+        self.formats = [SupportedFormat("ESRI Shapefile", "SHP", ".shp")]
+
+    def search(self, workspace):
+        return []
+
+
+class RasterObject(SupportedObject):
+    def __init__(self, *args, **kwargs):
+        super(SupportedObject, self).__init__(*args, **kwargs)
+        self.formats = [SupportedFormat("Geotiff", "GTIFF", ".tif"), SupportedFormat("dBase", "dBase", ".dbf")]
+
+    def search(self, workspace):
+        for format in self.formats:
+            print(format.extension)
+        return []
+
+
+class OtherObject(SupportedObject):
+    def __init__(self, *args, **kwargs):
+        super(SupportedObject, self).__init__(*args, **kwargs)
+        self.formats = []
+
+    def search(self, workspace):
+        for format in self.formats:
+            print(format.extension)
+        return []
 
 
 class DirectoryDriver(WorkspaceDriver):
@@ -11,9 +54,8 @@ class DirectoryDriver(WorkspaceDriver):
     def supports(self, workspace):
         return is_directory(workspace)
 
-    def searchable_objects():
-        return {'tables': {'formats': list_tables, 'rasters': list_rasters, 'vectors': list_vectors,
-                           'other': list_other_files}
+    def searchable_objects(self):
+        return {'tables': TableObject(), 'rasters': RasterObject(), 'vectors': VectorObject(), 'other': OtherObject()}
 
     def create(self, **kwargs):
         d = create_directory(kwargs['parent'], kwargs['name'])
@@ -21,22 +63,31 @@ class DirectoryDriver(WorkspaceDriver):
 
     def list_data(self, workspace, kwargs):
         print(kwargs)
-        rasters = kwargs.get('rasters', False)
-        print(f"rasters {rasters}")
-        return
+        data = {}
+        so = self.searchable_objects()
+        sok = so.keys()
+        for key in kwargs.keys() - ['recurse']:
+            if key in sok:
+                data[key] = so[key].search(workspace)
+            else:
+                print(f"'{key} are not a supported type")
 
-    def list_tables():
-        pass
+        return data
 
-    def list_rasters():
-        pass
 
-    def list_vectors():
-        pass
+#     def list_tables():
+#         pass
 
-    def list_other_files():
-        pass
+#     def list_rasters():
+#         pass
+
+#     def list_vectors():
+#         pass
+
+#     def list_other_files():
+#         pass
 
 
 def get_driver():
     return DirectoryDriver("Filesystem Directory", "DIR")
+

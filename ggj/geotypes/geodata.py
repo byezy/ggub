@@ -3,6 +3,7 @@ from os.path import join, abspath, isdir
 import pandas as pd
 from ggj.geotypes.workspaces.driver import get_workspace_driver
 from ..utils.filesystem import list_files
+from dotmap import DotMap
 
 pd.set_option('display.width', 200)
 pd.set_option('display.max_colwidth', 200)
@@ -10,34 +11,45 @@ pd.set_option('display.max_colwidth', 200)
 from osgeo import gdal
 
 
-# class SupportedTypes:
-#     def __init__(self):
-#         self.workspaces = self.rasters = self.vectors = self.tables = []
-
-#     def supported():
-#         gdal_supported = sorted([gdal.GetDriver(i).GetDescription() for i in range(gdal.GetDriverCount())])
-#         self.workspaces = {'GPKG': 'Geopackage', 'DIR': 'File Directory'}  # , 'GDB': 'File Geodatabase'}
-#         self.tables = {
-#             'CSV': 'Comma Separated Values'}  # , 'TXT': 'Delimited Text', 'DBF': 'dBase Table', 'FGT': 'File Geodatabase Table'}
-#         self.vectors = {'SHP': 'ESRI Shapefile'}
-
-
 class Geodata:
     def __init__(self, workspace, kwargs):
         self.kwargs = kwargs
         self.workspace = workspace
         self.workspace_driver = get_workspace_driver(workspace)
-        self.other = self.rasters = self.vectors = self.tables = self.workspaces = None
+        self.data = None
 
     def list_data(self):
-        data = self.workspace_driver.list_data(self.workspace, self.kwargs)
+        for k, v in self.workspace_driver.list_data(self.workspace, self.kwargs).items():
+            setattr(Geodata, k, v)
 
+
+def check_dict_default(dict, key, default):
+    if key not in dict:
+        dict[key] = default
+
+    return None
+
+
+def list_geodata(workspace=None, **kwargs):
+    if not workspace:
+        workspace = getcwd()
+        print(f'workspace no specified, using current working directory {workspace}')
+
+    check_dict_default(kwargs, 'recurse', True)
+    check_dict_default(kwargs, 'tables', True)
+    check_dict_default(kwargs, 'vectors', True)
+    check_dict_default(kwargs, 'rasters', True)
+
+    g = Geodata(workspace, kwargs)
+    g.list_data()
+
+    return g
 
 # import rasterio
 
-import warnings
+# import warnings
 
-warnings.filterwarnings("error")
+# warnings.filterwarnings("error")
 
 
 # import subprocess
@@ -138,19 +150,14 @@ warnings.filterwarnings("error")
 #     dfv.index.names = ["table"]
 #     return dfv
 
-def check_dict_default(dict, key, default):
-    if key not in dict:
-        dict[key] = default
 
-    return None
+# class SupportedTypes:
+#     def __init__(self):
+#         self.workspaces = self.rasters = self.vectors = self.tables = []
 
-
-def list_geodata(workspace=getcwd(), **kwargs):
-    check_dict_default(kwargs, 'recurse', True)
-    check_dict_default(kwargs, 'tables', True)
-    check_dict_default(kwargs, 'vectors', True)
-    check_dict_default(kwargs, 'rasters', True)
-
-    g = Geodata(workspace, kwargs)
-
-    return g
+#     def supported():
+#         gdal_supported = sorted([gdal.GetDriver(i).GetDescription() for i in range(gdal.GetDriverCount())])
+#         self.workspaces = {'GPKG': 'Geopackage', 'DIR': 'File Directory'}  # , 'GDB': 'File Geodatabase'}
+#         self.tables = {
+#             'CSV': 'Comma Separated Values'}  # , 'TXT': 'Delimited Text', 'DBF': 'dBase Table', 'FGT': 'File Geodatabase Table'}
+#         self.vectors = {'SHP': 'ESRI Shapefile'}

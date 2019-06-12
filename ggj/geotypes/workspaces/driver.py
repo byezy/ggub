@@ -6,6 +6,23 @@ from importlib import import_module
 from pkgutil import iter_modules
 
 
+class SupportedObject(ABC):
+    def __init__(self, name, formats):
+        self.name = name
+        self.formats = formats
+
+    def search(workspace):
+        pass
+
+
+class SupportedFormat:
+    def __init__(self, description, abbreviation, extension, extensions=[]):
+        self.description = description
+        self.abbreviation = abbreviation
+        self.extension = extension
+        self.extensions = extensions
+
+
 class WorkspaceDriver(ABC):
 
     def __init__(self, desc, abbr):
@@ -49,15 +66,3 @@ def get_workspace_driver(workspace):
             return driver
 
     raise ValueError('no driver found for {ws}')
-
-
-class Searchable(ABC):
-    def __init__(self, name, formats):
-        self.name = name
-        self.formats = formats
-
-    def search(workspace):
-        pass
-
-
-
