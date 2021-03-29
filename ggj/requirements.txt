@@ -74,7 +74,7 @@ py4j==0.10.8.1
 pycosat==0.6.3
 pycparser==2.19
 pycrsx==1.0.2
-Pygments==2.4.0
+Pygments==2.7.4
 pyOpenSSL==19.0.0
 pyparsing==2.4.0
 pyproj==1.9.6
